@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"log"
 	"testing"
 
 	"memfs"
@@ -68,39 +67,4 @@ func TestMemFS(t *testing.T) {
 	if diff := cmp.Diff(data, content); diff != "" {
 		t.Fatalf("write/read baz.txt mismatch %s", diff)
 	}
-}
-
-func ExampleMemFS() {
-	rootFS := memfs.New()
-
-	err := rootFS.MkdirAll("dir1/dir2")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = rootFS.WriteFile("dir1/dir2/f1.txt", []byte("incinerating-unsubstantial"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = fs.WalkDir(rootFS, ".", func(path string, d fs.DirEntry, err error) error {
-		fmt.Println(path)
-		return nil
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	content, err := fs.ReadFile(rootFS, "dir1/dir2/f1.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("%s\n", content)
-	// Output:
-	// 	.
-	// dir1
-	// dir1/dir2
-	// dir1/dir2/f1.txt
-	// incinerating-unsubstantial
 }
